@@ -34,6 +34,23 @@ static long khook__do_fork(unsigned long clone_flags,
 }
 
 /*******************************************************************************
+* Hooking do_exit
+*
+* Hooking process termination.
+*
+*******************************************************************************/
+KHOOK_EXT(void __noreturn, do_exit, long code);
+static void __noreturn khook_do_exit(long code) {
+	printk("%s: pid %d is going to die\n", __func__, task_pid_nr(current));
+	KHOOK_ORIGIN(do_exit, code);
+
+	/* Avoid "noreturn function does return" */
+	for (;;)
+		cpu_relax();
+}
+
+
+/*******************************************************************************
 * Hooking sys_kill and __x64_sys_kill
 *
 * Newer kernels changed their prefix for syscalls there for __x64_sys_kill

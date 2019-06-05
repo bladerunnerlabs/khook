@@ -46,31 +46,6 @@ static void khook_profile_task_exit(struct task_struct *task) {
 }
 
 /*******************************************************************************
-* Hooking sys_kill and __x64_sys_kill
-*
-* Newer kernels changed their prefix for syscalls there for __x64_sys_kill
-* should be tracked.
-*
-*******************************************************************************/
-
-// long sys_kill(pid_t pid, int sig)
-KHOOK_EXT(long, sys_kill, long, long);
-static long khook_sys_kill(long pid, long sig) {
-	printk("%s: executable %s, pid %ld, sig %ld\n", __func__, current->comm,
-		pid, sig);
-	return KHOOK_ORIGIN(sys_kill, pid, sig);
-}
-
-// This is the hook when process is killed. For example by "kill -9 <pid>"
-// long sys_kill(const struct pt_regs *regs) -- modern kernels
-KHOOK_EXT(long, __x64_sys_kill, const struct pt_regs *);
-static long khook___x64_sys_kill(const struct pt_regs *regs) {
-	printk("%s: executable %s, pid %ld, sig %ld\n", __func__, current->comm,
-		regs->di, regs->si);
-	return KHOOK_ORIGIN(__x64_sys_kill, regs);
-}
-
-/*******************************************************************************
 * Hooking load_elf_binary
 *
 * We are going to get executable name and additional information here after elf

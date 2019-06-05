@@ -5,7 +5,7 @@
 
 #include <linux/fs.h>
 #include <linux/sched.h>
-
+#include <linux/profile.h>
 /*******************************************************************************
 * Hooking _do_fork
 *
@@ -34,21 +34,16 @@ static long khook__do_fork(unsigned long clone_flags,
 }
 
 /*******************************************************************************
-* Hooking do_exit
+* Hooking profile_task_exit
 *
-* Hooking process termination.
-*
+* Hooking process termination. Hooking do_exit is problematic, therefore hooking
+* profile_task_exit that is called from do_exit looks like a better solution.
 *******************************************************************************/
-KHOOK_EXT(void __noreturn, do_exit, long code);
-static void __noreturn khook_do_exit(long code) {
-	printk("%s: pid %d is going to die\n", __func__, task_pid_nr(current));
-	KHOOK_ORIGIN(do_exit, code);
-
-	/* Avoid "noreturn function does return" */
-	for (;;)
-		cpu_relax();
+KHOOK_EXT(void, profile_task_exit, struct task_struct *task);
+static void khook_profile_task_exit(struct task_struct *task) {
+	printk("%s: pid %d is going to die\n", __func__, task_pid_nr(task));
+	KHOOK_ORIGIN(profile_task_exit, task);
 }
-
 
 /*******************************************************************************
 * Hooking sys_kill and __x64_sys_kill

@@ -15,7 +15,7 @@
 *******************************************************************************/
 KHOOK_EXT(void, wake_up_new_task, struct task_struct *p);
 static void khook_wake_up_new_task(struct task_struct *p) {
-	pid_t pid = task_pid_nr(task);
+	pid_t pid = task_pid_nr(p);
 
 	printk("%s: pid %d is going to start running\n", __func__, pid);
 	KHOOK_ORIGIN(wake_up_new_task, p);
@@ -81,8 +81,7 @@ static int khook_load_elf_binary(struct linux_binprm *bprm)
 	printk("%s: Pre load_elf_binary: pid %d, filename %s, real file name %s\n",
 		__func__, pid, bprm->filename, bprm->interp);
 	ret = KHOOK_ORIGIN(load_elf_binary, bprm);
-	printk("%s: Post load_elf_binary: pid %d, return %d\n", __func__, pid,
-		bprm->filename, bprm->interp, ret);
+	printk("%s: Post load_elf_binary: pid %d, return %d\n", __func__, pid, ret);
 
 	/* Worth also looking into bprm->vma_pages and  bprm->vma */
 

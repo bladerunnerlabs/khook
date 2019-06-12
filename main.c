@@ -15,9 +15,11 @@
 *******************************************************************************/
 KHOOK_EXT(void, wake_up_new_task, struct task_struct *p);
 static void khook_wake_up_new_task(struct task_struct *p) {
-	printk("%s: pid %d is going to start running\n", __func__, task_pid_nr(p));
+	pid_t pid = task_pid_nr(task);
+
+	printk("%s: pid %d is going to start running\n", __func__, pid);
 	KHOOK_ORIGIN(wake_up_new_task, p);
-	printk("%s: pid %d is running\n", __func__, task_pid_nr(p));
+	printk("%s: pid %d is running\n", __func__, pid);
 }
 
 /*******************************************************************************
@@ -43,7 +45,7 @@ static long khook__do_fork(unsigned long clone_flags,
 	ret = KHOOK_ORIGIN(_do_fork, clone_flags, stack_start, stack_size,
 		parent_tidptr, child_tidptr, tls);
 
-	printk("%s: executable %s, pid %ld\n", __func__, current->comm, ret);
+	printk("%s: parent executable %s, pid %ld\n", __func__, current->comm, ret);
 	return ret;
 }
 
@@ -55,7 +57,9 @@ static long khook__do_fork(unsigned long clone_flags,
 *******************************************************************************/
 KHOOK_EXT(void, profile_task_exit, struct task_struct *task);
 static void khook_profile_task_exit(struct task_struct *task) {
-	printk("%s: pid %d is going to die\n", __func__, task_pid_nr(task));
+	pid_t pid = task_pid_nr(task);
+
+	printk("%s: pid %d is going to die...\n", __func__, pid);
 	KHOOK_ORIGIN(profile_task_exit, task);
 }
 
@@ -72,9 +76,12 @@ KHOOK_EXT(int, load_elf_binary, struct linux_binprm *);
 static int khook_load_elf_binary(struct linux_binprm *bprm)
 {
 	int ret = 0;
+	pid_t pid = task_pid_nr(current);
 
+	printk("%s: Pre load_elf_binary: pid %d, filename %s, real file name %s\n",
+		__func__, pid, bprm->filename, bprm->interp);
 	ret = KHOOK_ORIGIN(load_elf_binary, bprm);
-	printk("%s: filename %s, real file name %s, return %d\n", __func__,
+	printk("%s: Post load_elf_binary: pid %d, return %d\n", __func__, pid,
 		bprm->filename, bprm->interp, ret);
 
 	/* Worth also looking into bprm->vma_pages and  bprm->vma */

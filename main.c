@@ -6,6 +6,20 @@
 #include <linux/fs.h>
 #include <linux/sched.h>
 #include <linux/profile.h>
+
+/*******************************************************************************
+* Hooking wake_up_new_task
+*
+* We want to know when a new task begin to run
+*
+*******************************************************************************/
+KHOOK_EXT(void, wake_up_new_task, struct task_struct *p);
+static void khook_wake_up_new_task(struct task_struct *p) {
+	printk("%s: pid %d is going to start running\n", __func__, task_pid_nr(p));
+	KHOOK_ORIGIN(wake_up_new_task, p);
+	printk("%s: pid %d is running\n", __func__, task_pid_nr(p));
+}
+
 /*******************************************************************************
 * Hooking _do_fork
 *

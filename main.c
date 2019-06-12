@@ -22,6 +22,59 @@ static void khook_wake_up_new_task(struct task_struct *p) {
 	printk("%s: pid %d is running\n", __func__, pid);
 }
 
+static void print_clone_flags(const char * prefix, long pid,
+								unsigned long flags) {
+	printk("%s: pid %ld clone flag: signal mask %lx\n",
+		prefix, pid, flags & CSIGNAL);
+
+	printk("%s: pid %ld clone flag: CLONE_VM\n",
+		prefix, pid, flags & CLONE_VM);
+	printk("%s: pid %ld clone flag: CLONE_FS\n",
+		prefix, pid, flags & CLONE_FS);
+	printk("%s: pid %ld clone flag: CLONE_FILES\n",
+		prefix, pid, flags & CLONE_FILES);
+	printk("%s: pid %ld clone flag: CLONE_SIGHAND\n",
+		prefix, pid, flags & CLONE_SIGHAND);
+	printk("%s: pid %ld clone flag: CLONE_PTRACE\n",
+		prefix, pid, flags & CLONE_PTRACE);
+	printk("%s: pid %ld clone flag: CLONE_VFORK\n",
+		prefix, pid, flags & CLONE_VFORK);
+	printk("%s: pid %ld clone flag: CLONE_PARENT\n",
+		prefix, pid, flags & CLONE_PARENT);
+	printk("%s: pid %ld clone flag: CLONE_THREAD\n",
+		prefix, pid, flags & CLONE_THREAD);
+	printk("%s: pid %ld clone flag: CLONE_NEWNS\n",
+		prefix, pid, flags & CLONE_NEWNS);
+	printk("%s: pid %ld clone flag: CLONE_SYSVSEM\n",
+		prefix, pid, flags & CLONE_SYSVSEM);
+	printk("%s: pid %ld clone flag: CLONE_SETTLS\n",
+		prefix, pid, flags & CLONE_SETTLS);
+	printk("%s: pid %ld clone flag: CLONE_PARENT_SETTID\n",
+		prefix, pid, flags & CLONE_PARENT_SETTID);
+	printk("%s: pid %ld clone flag: CLONE_CHILD_CLEARTID\n",
+		prefix, pid, flags & CLONE_CHILD_CLEARTID);
+	printk("%s: pid %ld clone flag: CLONE_DETACHED\n",
+		prefix, pid, flags & CLONE_DETACHED);
+	printk("%s: pid %ld clone flag: CLONE_UNTRACED\n",
+		prefix, pid, flags & CLONE_UNTRACED);
+	printk("%s: pid %ld clone flag: CLONE_CHILD_SETTID\n",
+		prefix, pid, flags & CLONE_CHILD_SETTID);
+	printk("%s: pid %ld clone flag: CLONE_NEWCGROUP\n",
+		prefix, pid, flags & CLONE_NEWCGROUP);
+	printk("%s: pid %ld clone flag: CLONE_NEWUTS\n",
+		prefix, pid, flags & CLONE_NEWUTS);
+	printk("%s: pid %ld clone flag: CLONE_NEWIPC\n",
+		prefix, pid, flags & CLONE_NEWIPC);
+	printk("%s: pid %ld clone flag: CLONE_NEWUSER\n",
+		prefix, pid, flags & CLONE_NEWUSER);
+	printk("%s: pid %ld clone flag: CLONE_NEWPID\n",
+		prefix, pid, flags & CLONE_NEWPID);
+	printk("%s: pid %ld clone flag: CLONE_NEWNET\n",
+		prefix, pid, flags & CLONE_NEWNET);
+	printk("%s: pid %ld clone flag: CLONE_IO\n",
+		prefix, pid, flags & CLONE_IO);
+}
+
 /*******************************************************************************
 * Hooking _do_fork
 *
@@ -41,11 +94,16 @@ static long khook__do_fork(unsigned long clone_flags,
 							int __user *parent_tidptr, int __user *child_tidptr,
 							unsigned long tls) {
 	long ret = 0;
+	unsigned long flags = clone_flags;
 
 	ret = KHOOK_ORIGIN(_do_fork, clone_flags, stack_start, stack_size,
 		parent_tidptr, child_tidptr, tls);
 
 	printk("%s: parent executable %s, pid %ld\n", __func__, current->comm, ret);
+	if (ret) {
+		print_clone_flags(__func__, ret, flags);
+	}
+
 	return ret;
 }
 

@@ -7,7 +7,7 @@
 #include <linux/sched.h>
 #include <linux/profile.h>
 
-#include "api/interceptor/process_interceptor.h"
+#include "interceptor/api/process_interceptor.h"
 
 /*******************************************************************************
 * Hooking wake_up_new_task

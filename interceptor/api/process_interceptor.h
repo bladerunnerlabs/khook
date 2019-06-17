@@ -29,8 +29,9 @@ struct process_interceptor_ops {
 	pre_wake_up_new_task_fn *pre_wake_up_new_task;
 	post_wake_up_new_task_fn *post_wake_up_new_task;
 
-	exit_task_fn *exit_task;	/*Will be called in the hook of profile_task_exit
-								which is called from do_exit */
+	exit_task_fn *exit_task;	/* Will be called in the hook of
+								profile_task_exit which is called from do_exit
+								*/
 };
 
 void process_interceptor_init(struct process_interceptor_ops *ops);

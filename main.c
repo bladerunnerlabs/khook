@@ -145,7 +145,7 @@ static long khook__do_fork(unsigned long clone_flags,
 	long ret = 0;
 	unsigned long flags = clone_flags;
 
-	printk("%s: new pid will be created\n", __func__);
+	printk("%s: new pid will be created with flags 0x%lx\n", __func__, flags);
 
 	ret = KHOOK_ORIGIN(_do_fork, clone_flags, stack_start, stack_size,
 		parent_tidptr, child_tidptr, tls);

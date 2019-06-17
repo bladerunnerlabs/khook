@@ -17,7 +17,8 @@ KHOOK_EXT(void, wake_up_new_task, struct task_struct *p);
 static void khook_wake_up_new_task(struct task_struct *p) {
 	pid_t pid = task_pid_nr(p);
 
-	printk("%s: pid %d is going to start running\n", __func__, pid);
+	printk("%s: pid %d is going to start running, mm 0x%px, active_mm 0x%px\n",
+		__func__, pid, p->mm, p->active_mm);
 	KHOOK_ORIGIN(wake_up_new_task, p);
 	printk("%s: pid %d is running\n", __func__, pid);
 }

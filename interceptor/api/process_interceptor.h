@@ -20,12 +20,16 @@ typedef void (exit_task_fn)(pid_t pid);
 */
 
 struct process_interceptor_ops {
-	pre__do_fork_fn pre__do_fork;
+	pre__do_fork_fn *pre__do_fork;
+	post__do_fork_fn *post__do_fork;
 
-	pre_wake_up_new_task_fn pre_wake_up_new_task;
-	post_wake_up_new_task_fn post_wake_up_new_task;
+	pre_load_elf_binary_fn *pre_load_elf_binary;
+	post_load_elf_binary_fn *post_load_elf_binary;
 
-	exit_task_fn exit_task;	/*Will be called in the hook of profile_task_exit
+	pre_wake_up_new_task_fn *pre_wake_up_new_task;
+	post_wake_up_new_task_fn *post_wake_up_new_task;
+
+	exit_task_fn *exit_task;	/*Will be called in the hook of profile_task_exit
 								which is called from do_exit */
 };
 

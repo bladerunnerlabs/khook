@@ -34,6 +34,6 @@ struct process_interceptor_ops {
 };
 
 void process_interceptor_init(struct process_interceptor_ops *ops);
-void process_interceptor_destroy();
+void process_interceptor_destroy(void);
 
 #endif /* PROCESS_INTERCEPTOR_H */

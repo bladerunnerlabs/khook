@@ -27,7 +27,7 @@ static void print_clone_flags(const char * prefix, long pid,
 
 	printk("%s: pid %ld clone flags: 0x%lx\n", prefix, pid, flags);
 
-	printk("%s: pid %ld clone flag - SIGNAL MASK: 0x%ld\n",
+	printk("%s: pid %ld clone flag - SIGNAL MASK: 0x%lx\n",
 		prefix, pid, flags & CSIGNAL);
 
 	if (flags & CLONE_VM) {
